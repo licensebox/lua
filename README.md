@@ -1,0 +1,23 @@
+# Licensebox lua SDK
+
+MIT · 2026 Vijai Kumar · https://meshing.engineer
+
+Native application licensing for Linux. Requires the public Licensebox C v0.3.0 shared library. Set `LICENSEBOX_LIB_DIR` (or `LICENSEBOX_LIBRARY` for runtime FFI bindings), and add that directory to `LD_LIBRARY_PATH` when linking native extensions. The host library retains installation keys, verifies leases, enforces native identity and stores usage locally. Other platforms and browser runtimes are unvalidated.
+
+The client supports lease, require/module check, local status, sign-in, logout, modules, access requests, access links, and usage recording. Stateless derive/native binding and lease verification helpers are included. Close each client explicitly in a finally/ensure block. Trusted clock, machine binding, sign-in and cancellation hooks are callable platform integration points; never source identity from end users. Callbacks must not reenter or close their client. Callback exceptions become `callback_error` after the native call returns. Native-owned JSON is always freed.
+
+`ci/setup.sh` installs dependencies on disposable Ubuntu 24.04 CI runners only. `ci/test.sh` compiles/tests the actual binding and package consumer. `ci/adapter.sh` runs the shared protocol adapter after testing/building. Run `python3 ../protocol/conformance/run.py --adapter "$PWD/ci/adapter.sh"` with the native environment configured. All test credentials and identities are synthetic.
+
+Build the native core using `scripts/install-native.sh`, then set `LICENSEBOX_LIB_DIR="$PWD/.native/lib"` and `LD_LIBRARY_PATH="$LICENSEBOX_LIB_DIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"`. Supply only administrator-provided trusted Ed25519 public keys.
+
+```lua
+local lb = require('licensebox')
+local client = lb.new({product='my-app', keys={['product-key']=trusted_public_key}},
+  {on_sign_in=function(url, code) show_sign_in(url, code) end})
+local ok, value = pcall(function() return client:require_module('core') end)
+client:close()
+if not ok then error(value) end
+-- Protected work.
+```
+
+Requires LuaJIT (FFI) and `lua-cjson`; standard PUC Lua is unsupported. Build/install using `luarocks make --deps-mode=none licensebox-0.1.0-1.rockspec` after installing the dependencies. Errors are tables with `code` and `message`. Methods: `lease`, `require_module`, `status`, `sign_in`, `logout`, `modules`, `requests`, `request_access`, `access_link`, `record`, `close`. Helpers: `derive_binding`, `native_binding`, `verify_lease`. Explicit close releases FFI callback trampolines as well as the client.
