@@ -20,7 +20,7 @@ if not ok then error(value) end
 -- Protected work.
 ```
 
-Requires LuaJIT (FFI) and `lua-cjson`; standard PUC Lua is unsupported. Build/install using `luarocks make --deps-mode=none licensebox-0.1.0-1.rockspec` after installing the dependencies. Errors are tables with `code` and `message`. Methods: `lease`, `require_module`, `status`, `sign_in`, `logout`, `modules`, `requests`, `request_access`, `access_link`, `record`, `close`. Helpers: `derive_binding`, `native_binding`, `verify_lease`. Explicit close releases FFI callback trampolines as well as the client.
+Requires LuaJIT (FFI) and `lua-cjson`; standard PUC Lua is unsupported. Build/install using `luarocks make --deps-mode=none licensebox-0.2.0-1.rockspec` after installing the dependencies. Errors are tables with `code` and `message`. Methods: `lease`, `require_module`, `status`, `sign_in`, `logout`, `modules`, `requests`, `request_access`, `access_link`, `record`, `close`. Helpers: `derive_binding`, `native_binding`, `verify_lease`. Explicit close releases FFI callback trampolines as well as the client.
 
 ## Optional heartbeat checkpoints
 
