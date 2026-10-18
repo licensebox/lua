@@ -69,6 +69,7 @@ local function call(self,op,args)
  self.busy=false;if not ok then error(value,0) end return value
 end
 function Client:lease()return call(self,'lease')end
+function Client:heartbeat(name)return call(self,'heartbeat',{module=arg(name)})end
 function Client:require_module(name)return call(self,'require',{module=arg(name)})end
 function Client:status()return call(self,'status')end
 function Client:sign_in(timeout)timeout=timeout or 0;if not finite(timeout)then fail('invalid_argument')end;return call(self,'sign_in',{timeout=timeout})end
