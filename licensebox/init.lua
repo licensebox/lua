@@ -10,7 +10,7 @@ int lb_native_binding(const char*,char*,size_t);int lb_derive_binding(const char
 int lb_verify_lease_json(const char*,const char*,const char*,double,char**);]]
 local path=os.getenv('LICENSEBOX_LIBRARY') or (os.getenv('LICENSEBOX_LIB_DIR') and os.getenv('LICENSEBOX_LIB_DIR')..'/liblicensebox.so') or 'licensebox'
 local C=ffi.load(path)
-local M={version='0.2.0',null=json.null}
+local M={version='0.3.0',null=json.null}
 local function fail(code,detail) error({code=code,message=detail or code},0) end
 local function arg(s) if type(s)~='string' or s:find('\0',1,true) then fail('invalid_argument') end return s end
 local function finite(n) return type(n)=='number' and n==n and math.abs(n)~=math.huge end

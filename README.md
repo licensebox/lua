@@ -2,7 +2,7 @@
 
 MIT · 2026 Vijai Kumar · https://meshing.engineer
 
-Native application licensing for Linux. Requires the public Licensebox C v0.4.0 shared library. Set `LICENSEBOX_LIB_DIR` (or `LICENSEBOX_LIBRARY` for runtime FFI bindings), and add that directory to `LD_LIBRARY_PATH` when linking native extensions. The host library retains installation keys, verifies leases, enforces native identity and stores usage locally. Other platforms and browser runtimes are unvalidated.
+Native application licensing for Linux. Requires the public Licensebox C v0.5.0 shared library. Set `LICENSEBOX_LIB_DIR` (or `LICENSEBOX_LIBRARY` for runtime FFI bindings), and add that directory to `LD_LIBRARY_PATH` when linking native extensions. The host library retains installation keys, verifies leases, enforces native identity and stores usage locally. Other platforms and browser runtimes are unvalidated.
 
 The client supports lease, require/module check, local status, sign-in, logout, modules, access requests, access links, and usage recording. Stateless derive/native binding and lease verification helpers are included. Close each client explicitly in a finally/ensure block. Trusted clock, machine binding, sign-in and cancellation hooks are callable platform integration points; never source identity from end users. Callbacks must not reenter or close their client. Callback exceptions become `callback_error` after the native call returns. Native-owned JSON is always freed.
 
@@ -20,7 +20,7 @@ if not ok then error(value) end
 -- Protected work.
 ```
 
-Requires LuaJIT (FFI) and `lua-cjson`; standard PUC Lua is unsupported. Build/install using `luarocks make --deps-mode=none licensebox-0.2.0-1.rockspec` after installing the dependencies. Errors are tables with `code` and `message`. Methods: `lease`, `require_module`, `status`, `sign_in`, `logout`, `modules`, `requests`, `request_access`, `access_link`, `record`, `close`. Helpers: `derive_binding`, `native_binding`, `verify_lease`. Explicit close releases FFI callback trampolines as well as the client.
+Requires LuaJIT (FFI) and `lua-cjson`; standard PUC Lua is unsupported. Build/install using `luarocks make --deps-mode=none licensebox-0.3.0-1.rockspec` after installing the dependencies. Errors are tables with `code` and `message`. Methods: `lease`, `require_module`, `status`, `sign_in`, `logout`, `modules`, `requests`, `request_access`, `access_link`, `record`, `close`. Helpers: `derive_binding`, `native_binding`, `verify_lease`. Explicit close releases FFI callback trampolines as well as the client.
 
 ## Optional heartbeat checkpoints
 
