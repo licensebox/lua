@@ -10,7 +10,7 @@ int lb_native_binding(const char*,char*,size_t);int lb_derive_binding(const char
 int lb_verify_lease_json(const char*,const char*,const char*,double,char**);]]
 local path=os.getenv('LICENSEBOX_LIBRARY') or (os.getenv('LICENSEBOX_LIB_DIR') and os.getenv('LICENSEBOX_LIB_DIR')..'/liblicensebox.so') or 'licensebox'
 local C=ffi.load(path)
-local M={version='0.3.0',null=json.null}
+local M={version='0.4.0',null=json.null}
 local function fail(code,detail) error({code=code,message=detail or code},0) end
 local function arg(s) if type(s)~='string' or s:find('\0',1,true) then fail('invalid_argument') end return s end
 local function finite(n) return type(n)=='number' and n==n and math.abs(n)~=math.huge end
@@ -39,7 +39,7 @@ local Client={};Client.__index=Client
 -- hooks contains trusted clock/machine_binding/on_sign_in/cancelled functions.
 function M.new(options,hooks)
  hooks=hooks or {};local opts={product=arg(options.product),keys=options.keys,version=arg(options.version or '')};keys(opts.keys)
- for _,name in ipairs({'server','directory','ca_bundle'}) do if options[name] then opts[name]=arg(options[name]) end end
+ for _,name in ipairs({'server','directory','ca_bundle','enrol_token'}) do if options[name] then opts[name]=arg(options[name]) end end
  local self=setmetatable({callbacks={},busy=false},Client);local cb=ffi.new('lb_callbacks');self.structure=cb
  local function wrap(ctype,f,fallback)
   local c=ffi.cast(ctype,function(...)local ok,v=pcall(f,...);if not ok then self.failure=v;return fallback end return v end)
@@ -78,5 +78,11 @@ function Client:modules()return call(self,'modules')end
 function Client:requests()return call(self,'requests')end
 function Client:request_access(modules,note)for _,s in ipairs(modules)do arg(s)end;return call(self,'request',{modules=modules,note=arg(note or '')})end
 function Client:access_link()return call(self,'access-link')end
+-- Service accounts and floating copies: require_module checks a floating module
+-- out by itself; options.enrol_token (else LICENSEBOX_ENROL_TOKEN) enrols on first lease.
+function Client:enrol(token)return call(self,'enrol',{token=arg(token)})end
+function Client:checkout(name)return call(self,'checkout',{module=arg(name)})end
+-- With no names every copy is returned (an absent list, as an empty table encodes as an object).
+function Client:checkin(...)local names={...};for _,s in ipairs(names)do arg(s)end;return call(self,'checkin',#names>0 and {modules=names} or {})end
 function Client:record(command,success,elapsed)if type(success)~='boolean' or not finite(elapsed) or elapsed<0 then fail('invalid_argument')end;return call(self,'record',{command=arg(command),success=success,elapsed=elapsed})end
 return M
